@@ -42,6 +42,13 @@ class EqContractAPIViewID(APIView):
 
 
 
+class EqClientContractAPIViewID(APIView):
+    def get(self, request, id):
+        contracts = EqContracts.objects.filter(id_client_id=id).select_related('id_client')
+        return Response(EqContractSerializer(contracts, many=True).data)
+
+
+
 class EqTransactionAPIView(APIView):
     def get(self, request):
         transactions = EqTransactions.objects.select_related('contract').all()

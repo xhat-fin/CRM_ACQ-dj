@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Транзакция {{ transaction.id }}</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-bg: #f5f5f5;
+            --border-color: #ddd;
+            --text-dark: #333;
+            --text-light: #fff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: var(--light-bg);
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .transaction-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .transaction-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .transaction-title {
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .transaction-id {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .transaction-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .detail-group {
+            margin-bottom: 15px;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .detail-value {
+            padding: 8px 0;
+        }
+
+        .amount {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #27ae60;
+        }
+
+        .commission {
+            color: #000080;
+            font-weight: bold;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            .transaction-details {
+                grid-template-columns: 1fr;
+            }
+        }
+        .action-link {
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .action-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="transaction-card">
+        <div class="transaction-header">
+            <h1 class="transaction-title">Детали транзакции</h1>
+            <span class="transaction-id">ID: {{ transaction.id }}</span>
+        </div>
+
+        <div class="transaction-details">
+            <div class="detail-group">
+                <span class="detail-label">Дата транзакции:</span>
+                <div class="detail-value">{{ transaction.date_transaction }}</div>
+            </div>
+
+            <div class="detail-group">
+                <span class="detail-label">Сумма:</span>
+                <div class="detail-value amount">{{ transaction.sum_transaction }}</div>
+            </div>
+
+            <div class="detail-group">
+                <span class="detail-label">Комиссия:</span>
+                <div class="detail-value commission">{{ transaction.sum_commission }}</div>
+            </div>
+
+            <div class="detail-group">
+                <span class="detail-label">Номер карты:</span>
+                <div class="detail-value">{{ transaction.num_card }}</div>
+            </div>
+
+            <div class="detail-group">
+                <span class="detail-label">Договор эквайринга:</span>
+                <div class="detail-value"><a href="{{ url_for('get_eq_contract_id', id=transaction.contract_id) }}" class="action-link">{{ transaction.contract_num }}</a></div>
+            </div>
+
+            <div class="detail-group">
+                <span class="detail-label">Номер счета:</span>
+                <div class="detail-value">{{ transaction.contract_acc_num }}</div>
+            </div>
+        </div>
+    </div>
+
+    <a href="{{ url_for('get_transactions') }}" class="back-link">← К списку транзакций</a>
+</body>
+</html>

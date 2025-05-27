@@ -52,4 +52,3 @@ while True:
     time.sleep(1)
     if c == 60:
         break
-

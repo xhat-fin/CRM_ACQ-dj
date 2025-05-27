@@ -2,6 +2,7 @@ import jwt
 from flask import Flask, jsonify, render_template, request, session, url_for, redirect
 import requests as req
 from datetime import datetime
+import random
 
 app = Flask(__name__)
 app.secret_key = '123'
@@ -28,6 +29,31 @@ def check_token(access, refresh):
     else:
         print('Все просрочено')
         return False
+
+
+
+# исправить этот лютый хардкодинг
+def generate_data(all_acc_num, all_contract_num):
+    # генерация номера счета
+    c = 1
+    while True:
+        acc = f"BY{random.randint(10, 99)}HATN3819{random.randint(1000000000000000, 9999999999999999)}"
+        if acc not in all_acc_num:
+            break
+        c += 1
+        if c == 1500:
+            break
+
+    # генерация номера счета
+    len_list = len(all_contract_num)
+    for num in range(len_list + 1, len_list + 100002):
+        cntr = f'EQ-{num}'
+        if cntr not in all_contract_num:
+            break
+    return {
+            "cntr":cntr,
+            "acc":acc
+            }
 
 
 
@@ -271,6 +297,45 @@ def get_eq_contract_id(id):
     transactions = response_transactions.json()
 
     return render_template('eq_contracts/contract_id.html', contract=contract, transactions=transactions)
+
+
+# создание договора эквайринга
+@app.route('/create-contract/<int:id>', methods=['POST'])
+def contract_create(id):
+    if 'access' not in session:
+        print('Нет токена')
+        return redirect(url_for(endpoint='login'))
+    if check_token(access=session.get('access'), refresh=session.get('refresh')) == False:
+        session.clear()
+        return redirect(url_for(endpoint='login'))
+
+
+    if request.method == "POST":
+        headers = {"Authorization": f"Bearer {session.get('access')}"}
+
+        response = req.get('http://127.0.0.1:8000/eq-contract/', headers=headers)
+        response.raise_for_status()  # Проверяем на ошибки HTTP
+        data_contracts = response.json()
+
+        all_contract_num = [i['contract_num'] for i in data_contracts]
+        all_acc_num = [i['acc_num'] for i in data_contracts]
+
+        data = generate_data(all_acc_num=all_acc_num, all_contract_num=all_contract_num)
+
+        new_contract = {
+            "contract_num": data["cntr"],
+            "acc_num": data["acc"],
+            "id_client_id": id,
+        }
+
+        response = req.post('http://127.0.0.1:8000/eq-contract/', json=new_contract, headers=headers)
+        response.raise_for_status()
+
+        contract_data = response.json()
+        return redirect(url_for('get_client_id', id=id))
+    return jsonify({"error": "error"})
+
+
 
 
                                                             ##############

@@ -24,10 +24,10 @@ class EqTransactions(models.Model):
     num_card = models.CharField()
     sum_commission = models.DecimalField(max_digits=12, decimal_places=2)
 
+    # мб удалю
     def save(self, *args, **kwargs):
         self.contract.balance += self.sum_transaction
         self.contract.commission += self.sum_commission
-
         self.contract.save()
 
         super().save(*args, **kwargs)

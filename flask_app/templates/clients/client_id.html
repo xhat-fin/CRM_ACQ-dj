@@ -244,8 +244,9 @@
 
             <div class="info-section contracts-section">
                 <h3>Связанные договора</h3>
-                <a href="#" class="btn">Создать договор</a>
-
+                <form action="{{ url_for('contract_create', id=client.id) }}" method="POST">
+                    <button type="submit" class="btn">Создать договор</button>
+                </form>
                 {% if contracts %}
                 <div class="contracts-grid">
                     {% for contract in contracts %}

@@ -24,6 +24,9 @@ class ClientsAPIView(APIView):
 
 
 class ClientsAPIViewID(APIView):
+
+    permission_classes = (IsAuthenticated,)
+
     def get(self, request, id):
         client = Clients.objects.get(id=id)
         serializer = ClientSerializer(client)
